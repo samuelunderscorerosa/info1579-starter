@@ -17,7 +17,6 @@ const display = (label, value) =>
 
 // ADD YOUR CODE BELOW
 
-// Part 0: Arrays
 const courseModules = [
   "Module 1",
   "Module 2",
@@ -30,9 +29,61 @@ const courseModules = [
   "Module 9",
   "Module 10",
 ];
-let completedModules = ["Module 1", "Module 2"];
 
+function calculateCompletePercent(completed, total) {
+  return (completed / total) * 100;
+}
+
+function calculateStudyHours(modules, hoursPerModule) {
+  return modules * hoursPerModule;
+}
+
+function getCourseProgress(percentRemaining) {
+  if (percentRemaining === 0) {
+    return "Finished!";
+    } else if (percentRemaining >= 1 && percentRemaining < 25) {
+        return "Almost Finished!";
+    }  else if (percentRemaining >= 25 && percentRemaining < 75) {
+        return "Making Progress";
+    }  else if (percentRemaining >= 75 && percentRemaining <= 100) {
+        return "Just Getting Started";
+    }  else {
+        return "Invalid entry.";
+    }
+}
+
+let getCourseGrade = (percentCompleted) => {
+  if (percentCompleted >= 90) {
+    return "A";
+  }   else if (percentCompleted >= 80) {
+    return "B";
+  }   else if (percentCompleted >= 70) {
+    return "C";
+  }   else if (percentCompleted >= 60) {
+    return "D";
+  }   else if (percentCompleted < 60) {
+    return "F";
+  }   else {
+    return "Invalid entry.";
+  }
+}
+
+let displayModules = (modules) => {
+  for (let i = 0; i < modules.length; i++) {
+    display(`Module ${i + 1}`, modules[i]);
+  }
+}
+
+let displayCompletedModules = (...modules) => {
+  return modules.join(", ");
+};
+
+
+let completedModules = ["Module 1", "Module 2", "Module 3"];
+
+let completedModulesList = displayCompletedModules(...completedModules);
 // TODO: Create variables for your name (string), total number of modules for our class (number), and if you're enrolled (boolean)
+
 let myName = "Samuel Rosa";
 let totalModules = courseModules.length;
 let isEnrolled = true;
@@ -40,11 +91,11 @@ let course = "JavaScript";
 
 // TODO: Calculate the total study hours for the course. There are 10 modules. Each module takes roughly 6 hours.
 // Formula: totalStudyHours = totalModules * hoursPerWeek
-let hoursPerWeek = 6;
-let totalStudyHours = totalModules * hoursPerWeek;
+let totalStudyHours = calculateStudyHours(courseModules.length, 6);
 
 // TODO: Calculate the number of study hours each day. Convert the output to minutes (this formula is not provided).
 // Formula: dailyStudyHours = hoursPerWeek / 7
+let hoursPerWeek = 6;
 let dailyStudyHours = hoursPerWeek / 7;
 let dailyStudyMinutes = dailyStudyHours * 60;
 
@@ -52,47 +103,12 @@ let dailyStudyMinutes = dailyStudyHours * 60;
 let adjustedDailyHours = hoursPerWeek / 6;
 let adjustedDailyMinutes = adjustedDailyHours * 60;
 
-completedModules = Number(
-  prompt("Enter the number of completed modules (1-10): ")
-);
-
 // TODO: Calculate the course percent complete and the course percent remaining.
 // Formula: percent = (part / whole) * 100
-let percentCompleted = (completedModules / totalModules) * 100;
+let percentCompleted = calculateCompletePercent(completedModules.length, courseModules.length);
 let percentRemaining = 100 - percentCompleted;
 
-let courseProgress = "";
-
-if (percentRemaining === 0) {
-  courseProgress = "Finished!";
-} else if (percentRemaining >= 1 && percentRemaining < 25) {
-  courseProgress = "Almost Finished!";
-} else if (percentRemaining >= 25 && percentRemaining < 75) {
-  courseProgress = "Making Progress";
-} else if (percentRemaining >= 75 && percentRemaining <= 100) {
-  courseProgress = "Just Getting Started";
-} else {
-  courseProgress = "Invalid entry.";
-}
-
-let courseGrade = "";
-
-if (percentCompleted >= 90) {
-  courseGrade = "A";
-} else if (percentCompleted >= 80) {
-  courseGrade = "B";
-} else if (percentCompleted >= 70) {
-  courseGrade = "C";
-} else if (percentCompleted >= 60) {
-  courseGrade = "D";
-} else if (percentCompleted < 60) {
-  courseGrade = "F";
-} else {
-  courseGrade = "Invalid entry.";
-}
-
 let studyDay = "";
-let studyPlan = "";
 
 if (percentRemaining === 0) {
   studyDay = "Complete";
@@ -100,39 +116,44 @@ if (percentRemaining === 0) {
   studyDay = prompt("Enter a study day example Monday: ");
 }
 
-switch (studyDay) {
-  case "Monday": //
-    studyPlan = `Study for ${dailyStudyMinutes.toFixed(2)} minutes today.`;
-    break;
-  case "Tuesday":
-    studyPlan = `Lab day work for ${adjustedDailyMinutes.toFixed(
+let getStudyPlan = (studyDay) => {
+  let studyPlan = "";
+  switch (studyDay) {
+    case "Monday": //
+      studyPlan = `Study for ${dailyStudyMinutes.toFixed(2)} minutes today.`;
+      break;
+    case "Tuesday":
+      studyPlan = `Lab day work for ${adjustedDailyMinutes.toFixed(
       2
     )} minutes.`;
     break;
-  case "Wednesday":
-    studyPlan = `Applied programming Code for ${adjustedDailyMinutes.toFixed(
-      2
-    )} minutes today.`;
-    break;
-  case "Thursday":
-    studyPlan = "kahoot/blooket day.";
-    break;
-  case "Friday":
-    studyPlan = "slow day of studyin just review material";
-    break;
-  case "Saturday": // Rest day
-    studyPlan = "Rest day.";
-    break;
-  case "Sunday":
-    studyPlan = "party night.";
-    break;
-  case "Complete":
-    studyPlan = "Course Completed!";
-    break;
-  default:
-    studyPlan = "Invalid day.";
-    break;
+    case "Wednesday":
+      studyPlan = `Applied programming Code for ${adjustedDailyMinutes.toFixed(
+        2
+      )} minutes today.`;
+      break;
+    case "Thursday":
+      studyPlan = "kahoot/blooket day.";
+      break;
+    case "Friday":
+      studyPlan = "slow day of studyin just review material";
+      break;
+    case "Saturday": // Rest day
+      studyPlan = "Rest day.";
+      break;
+    case "Sunday":
+      studyPlan = "party night.";
+      break;
+    case "Complete":
+      studyPlan = "Course Completed!";
+      break;
+    default:
+      studyPlan = "Invalid day.";
+      break;
+  }
+  return studyPlan;
 }
+
 
 // TODO: Display your results. Use the correct variables and avoid hard-coding the data below.
 // TODO: Adjust all decimals to two places.
@@ -140,6 +161,8 @@ display("Message", `Welcome to ${course} and to MCC!`);
 display("Name", myName);
 display("Is Enrolled", isEnrolled);
 display("Total Modules", totalModules);
+display("Completed Modules", completedModulesList);
+display("Modules", displayModules(courseModules));
 display("Total Study Hours", totalStudyHours.toFixed(2));
 display("Daily Study Hours", dailyStudyHours.toFixed(2));
 display("Daily Study Minutes", adjustedDailyMinutes.toFixed(2));
@@ -147,7 +170,7 @@ display("Daily Study Minutes", adjustedDailyMinutes.toFixed(2));
 // TODO: Display your results with a % sign
 display("Percent Completed", `${percentCompleted.toFixed(2)}%`);
 display("Percent Remaining", `${percentRemaining.toFixed(2)}%`);
-display("Current Progress", courseProgress);
-display("Course Grade", courseGrade);
+display("Current Progress", getCourseProgress(percentRemaining));
+display("Course Grade", getCourseGrade(percentCompleted));
 display("Study Day", studyDay);
-display("Study Plan", studyPlan);
+display("Study Plan", getStudyPlan(studyDay));
