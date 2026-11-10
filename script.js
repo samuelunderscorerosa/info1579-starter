@@ -1,10 +1,27 @@
 /*
     Name: Samuel Rosa
-    Assignment: Module 7 Applied Programming Activity
+    Assignment: Module 8 Applied Programming Activity
     Instructor: Lisa
 */
 
 "use strict";
+
+import { courseModules } from "./data.js";
+import {
+  calculateCompletePercent,
+  calculateStudyHours,
+  getCourseGrade,
+  getCourseProgress,
+  getStudyPlan
+} from "./calculations.js";
+import { validateInputs, runUnitTests } from "./validators.js";
+import {
+  resetDashboard,
+  displayRemainingModules,
+  applyDashboardColor,
+  displayDashboard
+} from "./dashboard.js";
+import { displayJoke, displayQuote } from "./api.js";
 
 const studentNameInput = document.getElementById("studentName");
 const completedModulesInput = document.getElementById("completedModules");
@@ -12,134 +29,6 @@ const studyDayInput = document.getElementById("studyDay");
 const generateButton = document.getElementById("generateButton");
 const resetButton = document.getElementById("resetButton");
 const output = document.getElementById("output");
-const jokeContainer = document.getElementById("jokeContainer");
-const quoteContainer = document.getElementById("quoteContainer");
-
-const courseModules = [
-  { moduleName: "Module 1", hoursRequired: 6, topic: "JavaScript fundamentals" },
-  { moduleName: "Module 2", hoursRequired: 6, topic: "Conditionals, arrays" },
-  { moduleName: "Module 3", hoursRequired: 8, topic: "Functions, scope, loops" },
-  { moduleName: "Module 4", hoursRequired: 5, topic: "DOM" },
-  { moduleName: "Module 5", hoursRequired: 5, topic: "Debugging, error handling" },
-  { moduleName: "Module 6", hoursRequired: 6, topic: "APIs" },
-  { moduleName: "Module 7", hoursRequired: 7, topic: "Objects, iterators" },
-  { moduleName: "Module 8", hoursRequired: 6, topic: "Modular JS, code organization, final project planning" },
-  { moduleName: "Module 9", hoursRequired: 7, topic: "Modern tools, final project development" },
-  { moduleName: "Module 10", hoursRequired: 10, topic: "Final project, deployment" }
-];
-
-function calculateCompletePercent(completed, total) {
-  return (completed / total) * 100;
-}
-
-function calculateStudyHours(modules, hoursPerModule) {
-  return modules * hoursPerModule;
-}
-
-function getCourseProgress(percentRemaining) {
-  if (percentRemaining === 0) {
-    return "Finished!";
-  } else if (percentRemaining >= 1 && percentRemaining < 25) {
-    return "Almost Finished!";
-  } else if (percentRemaining >= 25 && percentRemaining < 75) {
-    return "Making Progress";
-  } else if (percentRemaining >= 75 && percentRemaining <= 100) {
-    return "Just Getting Started";
-  } else {
-    return "Invalid entry.";
-  }
-}
-
-let getCourseGrade = (percentCompleted) => {
-  if (percentCompleted >= 90) {
-    return "A";
-  } else if (percentCompleted >= 80) {
-    return "B";
-  } else if (percentCompleted >= 70) {
-    return "C";
-  } else if (percentCompleted >= 60) {
-    return "D";
-  } else if (percentCompleted < 60) {
-    return "F";
-  } else {
-    return "Invalid entry.";
-  }
-};
-
-let displayModules = (modules) => {
-  const list = document.createElement("ul");
-  for (let i = 0; i < modules.length; i++) {
-    const listItem = document.createElement("li");
-    listItem.textContent = modules[i].moduleName;
-    list.appendChild(listItem);
-  }
-  return list;
-};
-
-const displayRemainingModules = remainingModules => {
-  document.getElementById("remainingModulesList").appendChild(displayModules(remainingModules));
-};
-
-let hoursPerWeek = 6;
-let adjustedDailyHours = hoursPerWeek / 6;
-let adjustedDailyMinutes = adjustedDailyHours * 60;
-
-let getStudyPlan = (studyDay) => {
-  const dailyMinutes = (hoursPerWeek / 7) * 60;
-  let studyPlan = "";
-  switch (studyDay) {
-    case "Monday":
-      studyPlan = `Study for ${dailyMinutes.toFixed(2)} minutes today.`;
-      break;
-    case "Tuesday":
-      studyPlan = `Lab day work for ${adjustedDailyMinutes.toFixed(2)} minutes.`;
-      break;
-    case "Wednesday":
-      studyPlan = `Applied programming Code for ${adjustedDailyMinutes.toFixed(
-        2
-      )} minutes today.`;
-      break;
-    case "Thursday":
-      studyPlan = "kahoot/blooket day.";
-      break;
-    case "Friday":
-      studyPlan = "slow day of studyin just review material";
-      break;
-    case "Saturday":
-      studyPlan = "Rest day.";
-      break;
-    case "Sunday":
-      studyPlan = "party night.";
-      break;
-    case "Complete":
-      studyPlan = "Course Completed!";
-      break;
-    default:
-      studyPlan = "Invalid day.";
-      break;
-  }
-  return studyPlan;
-};
-
-const validateInputs = (studentName, completedModules, studyDay) => {
-  const errors = [];
-
-  if (studentName.trim() === "") {
-    errors.push(`<li>Please enter a name.</li>`);
-  }
-
-  if (completedModules < 0 || completedModules > 10) {
-    errors.push(`<li>Completed modules must be between 0 and 10.</li>`);
-  }
-
-  if (studyDay === "") {
-    errors.push(`<li>Please select a study day.</li>`);
-  }
-
-  if (errors.length > 0) {
-    throw new Error(errors.join(""));
-  }
-};
 
 const generateDashboard = () => {
   try {
@@ -178,6 +67,7 @@ const generateDashboard = () => {
     console.log("Module Names: ", moduleNames);
 
     displayDashboard(
+      output,
       studentName,
       completedModules,
       totalStudyHours,
@@ -190,7 +80,7 @@ const generateDashboard = () => {
       studyPlan
     );
     displayRemainingModules(remainingModules);
-    applyDashboardColor(percentComplete);
+    applyDashboardColor(percentComplete, output);
 
     runUnitTests();
   } catch (error) {
@@ -203,141 +93,10 @@ const generateDashboard = () => {
   }
 };
 
-const displayDashboard = (
-  studentName,
-  completedModules,
-  totalStudyHours,
-  remainingHours,
-  percentComplete,
-  percentRemaining,
-  grade,
-  progress,
-  studyDay,
-  studyPlan
-) => {
-  output.innerHTML = `
-        <div class="dashboard-card">
-
-            <h2>My Study Dashboard</h2>
-
-            <p><strong>Name:</strong> ${studentName}</p>
-
-            <p><strong>Total Modules:</strong> ${courseModules.length}</p>
-
-            <p><strong>Completed Modules:</strong> ${completedModules}</p>
-
-            <p><strong>Total Study Hours:</strong> ${totalStudyHours}</p>
-
-            <p><strong>Remaining Study Hours:</strong> ${remainingHours}</p>
-
-            <p><strong>Percent Complete:</strong>${percentComplete.toFixed(0)}%</p>
-
-            <p><strong>Percent Remaining:</strong>${percentRemaining.toFixed(0)}%</p>
-
-            <p><strong>Current Grade:</strong> ${grade}</p>
-
-            <p><strong>Progress Status:</strong>${progress}</p>
-
-            <p><strong>Study Day:</strong>${studyDay}</p>
-
-            <p><strong>Today's Plan:</strong>${studyPlan}</p>
-
-            <p><strong>Remaining Modules</strong><div id="remainingModulesList"></div></p>
-
-        </div>`;
-};
-
-const applyDashboardColor = (percentComplete) => {
-  if (percentComplete >= 75) {
-    output.style.backgroundColor = "#d4edda";
-  } else if (percentComplete >= 25) {
-    output.style.backgroundColor = "#fff3cd";
-  } else {
-    output.style.backgroundColor = "#f8d7da";
-  }
-};
-
-const resetDashboard = () => {
-  console.log("Student Name: ", studentNameInput.value);
-  console.log("Completed Modules: ", completedModulesInput.value);
-  console.log("Study Day: ", studyDayInput.value);
-
-  studentNameInput.value = "";
-  studyDayInput.selectedIndex = 0;
-  completedModulesInput.value = 0;
-  output.innerHTML = "";
-  output.style.backgroundColor = "";
-};
-
 generateButton.addEventListener("click", generateDashboard);
-resetButton.addEventListener("click", resetDashboard);
-
-const runUnitTests = () => {
-  console.assert(getCourseGrade(95) === "A", "Grade A test failed");
-  console.assert(getCourseGrade(85) === "B", "Grade B test failed");
-  console.assert(getCourseGrade(75) === "C", "Grade C test failed");
-  console.assert(getCourseGrade(65) === "D", "Grade D test failed");
-  console.assert(getCourseGrade(40) === "F", "Grade F test failed");
-
-  console.assert(
-    calculateCompletePercent(5, 10) === 50,
-    "Percent complete test failed"
-  );
-  console.assert(
-    calculateStudyHours(10, 6) === 60,
-    "Study hours test failed"
-  );
-  console.assert(
-    getCourseProgress(0) === "Finished!",
-    "Progress finished test failed"
-  );
-  console.assert(
-    getCourseProgress(100) === "Just Getting Started",
-    "Progress just started test failed"
-  );
-  console.assert(
-    getStudyPlan("Saturday") === "Rest day.",
-    "Study plan test failed"
-  );
-};
-
-const getJoke = async () => {
-  const response = await fetch(
-    "https://official-joke-api.appspot.com/random_joke"
-  );
-  const data = await response.json();
-  return data;
-};
-
-const displayJoke = async () => {
-  try {
-    jokeContainer.innerHTML = "Loading joke...";
-    const joke = await getJoke();
-    jokeContainer.innerHTML = `
-      <p>${joke.setup}</p>
-      <p>${joke.punchline}</p>`;
-  } catch (error) {
-    jokeContainer.innerHTML = `Unable to load joke.`;
-  }
-};
-
-const getQuote = async () => {
-  const response = await fetch("https://dummyjson.com/quotes/random");
-  const data = await response.json();
-  return data;
-};
-
-const displayQuote = async () => {
-  try {
-    quoteContainer.innerHTML = "Loading quote...";
-    const quote = await getQuote();
-    quoteContainer.innerHTML = `
-      <p>"${quote.quote}"</p>
-      <p>- ${quote.author}</p>`;
-  } catch (error) {
-    quoteContainer.innerHTML = `Unable to load quote.`;
-  }
-};
+resetButton.addEventListener("click", () =>
+  resetDashboard(studentNameInput, completedModulesInput, studyDayInput, output)
+);
 
 displayJoke();
 displayQuote();
