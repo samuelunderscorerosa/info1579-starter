@@ -5,7 +5,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>My Website!</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="styles.css" />
+    <style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1f2933;
+  background-color: #f4f6f8;
+}
+
+.topnav {
+  display: flex;
+  background-color: #1f3a5f;
+}
+
+.topnav a {
+  padding: 14px 20px;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.topnav a:hover {
+  background-color: #2f5688;
+}
+
+.topnav a.active {
+  background-color: #4c8bd6;
+}
+
+.innerbody {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+label {
+  display: block;
+  margin: 12px 0;
+  font-weight: bold;
+}
+
+input,
+textarea,
+select {
+  margin-left: 8px;
+  padding: 6px 8px;
+  font-size: 1rem;
+}
+
+button {
+  margin: 8px 8px 8px 0;
+  padding: 8px 18px;
+  font-size: 1rem;
+  color: #ffffff;
+  background-color: #1f3a5f;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #2f5688;
+}
+
+#output,
+.module-output {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.dashboard-card {
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-card h2,
+.dashboard-card h3 {
+  margin-top: 0;
+}
+
+footer {
+  background-color: #1f3a5f;
+  color: #ffffff;
+  text-align: center;
+  padding: 16px;
+}
+
+.footer .row {
+  margin: 6px 0;
+}
+
+.footer a {
+  color: #ffffff;
+}
+
+textarea {
+  display: block;
+  width: 100%;
+  margin: 6px 0 0;
+  font-family: inherit;
+}
+    </style>
   </head>
   <body>
     <div class="topnav">
@@ -16,10 +123,9 @@
 
     <div class="innerbody">
       <h1>Welcome to JavaScript!</h1>
-        <h4>Joke of the day</h4>
-        <div id="jokeContainer"></div>
-        <h4>Quote of the day</h4>
-        <div id="quoteContainer"></div>
+      <h4>Quote of the day</h4>
+      <div id="quoteContainer"></div>
+
       <label> Student Name: <input id="studentName" /> </label>
 
       <label>
@@ -37,6 +143,15 @@
           <option>Friday</option>
           <option>Saturday</option>
           <option>Sunday</option>
+        </select>
+      </label>
+
+      <label>
+        Career Path:
+        <select id="career">
+          <option>Software Developer</option>
+          <option>Web Developer</option>
+          <option>Game Developer</option>
         </select>
       </label>
 
@@ -58,6 +173,417 @@
         </div>
       </div>
     </footer>
-    <script src="script.js" type="module"></script>
+    <script>
+const careerPaths = [
+  {
+    name: "Software Developer",
+    skills: [
+      "Java",
+      "Python",
+      "Data Structures and Algorithms",
+      "Git and GitHub",
+      "SQL and Databases",
+      "Unit Testing"
+    ],
+    resources: [
+      "CS50 by Harvard (edX)",
+      "freeCodeCamp",
+      "Clean Code by Robert C. Martin",
+      "LeetCode",
+      "Algorithms Specialization (Coursera)"
+    ]
+  },
+  {
+    name: "Web Developer",
+    skills: [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "React",
+      "Responsive Design"
+    ],
+    resources: [
+      "MDN Web Docs",
+      "The Odin Project",
+      "Eloquent JavaScript by Marijn Haverbeke",
+      "freeCodeCamp"
+    ]
+  },
+  {
+    name: "Game Developer",
+    skills: [
+      "C#",
+      "Unity",
+      "C++",
+      "3D Math and Physics"
+    ],
+    resources: [
+      "Unity Learn",
+      "Game Programming Patterns by Robert Nystrom",
+      "GameDev.tv Courses (Udemy)",
+      "Godot Engine Documentation"
+    ]
+  }
+];
+
+const courseModules = [
+  { moduleName: "Module 1: Variables and Data Types", hoursRequired: 6 },
+  { moduleName: "Module 2: Operators and Expressions", hoursRequired: 6 },
+  { moduleName: "Module 3: Conditionals", hoursRequired: 6 },
+  { moduleName: "Module 4: Loops", hoursRequired: 6 },
+  { moduleName: "Module 5: Functions", hoursRequired: 6 },
+  { moduleName: "Module 6: Arrays and Objects", hoursRequired: 6 },
+  { moduleName: "Module 7: Array Methods", hoursRequired: 6 },
+  { moduleName: "Module 8: The DOM and Events", hoursRequired: 6 },
+  { moduleName: "Module 9: Modules and APIs", hoursRequired: 6 },
+  { moduleName: "Module 10: Final Project", hoursRequired: 6 }
+];
+
+const calculateStudyHours = (moduleCount, hoursPerModule) =>
+  moduleCount * hoursPerModule;
+
+const calculateCompletePercent = (completedModules, totalModules) => {
+  if (totalModules === 0) {
+    return 0;
+  }
+
+  return Math.round((completedModules / totalModules) * 100);
+};
+
+const getCourseGrade = (percentComplete) => {
+  if (percentComplete >= 90) {
+    return "A";
+  }
+  if (percentComplete >= 80) {
+    return "B";
+  }
+  if (percentComplete >= 70) {
+    return "C";
+  }
+  if (percentComplete >= 60) {
+    return "D";
+  }
+  return "F";
+};
+
+const getCourseProgress = (percentRemaining) => {
+  if (percentRemaining === 0) {
+    return "Course complete";
+  }
+  if (percentRemaining <= 25) {
+    return "Almost there";
+  }
+  if (percentRemaining <= 50) {
+    return "Making steady progress";
+  }
+  if (percentRemaining < 100) {
+    return "Getting started";
+  }
+  return "Not started";
+};
+
+const getStudyPlan = (studyDay) => {
+  const plans = {
+    Monday: "Read the next module lesson",
+    Tuesday: "Work through the practice exercises",
+    Wednesday: "Review notes and key terms",
+    Thursday: "Start the module assignment",
+    Friday: "Finish and test the assignment",
+    Saturday: "Catch up on any missed work",
+    Sunday: "Rest and plan the week ahead"
+  };
+
+  return plans[studyDay] || "Choose a study day";
+};
+
+const validateInputs = (
+  studentName,
+  completedModules,
+  studyDay,
+  career
+) => {
+  const errors = [];
+
+  if (studentName.trim() === "") {
+    errors.push("Student name is required.");
+  }
+
+  if (
+    !Number.isInteger(completedModules) ||
+    completedModules < 0 ||
+    completedModules > courseModules.length
+  ) {
+    errors.push(
+      `Completed modules must be a whole number from 0 to ${courseModules.length}.`
+    );
+  }
+
+  if (!studyDay) {
+    errors.push("Please select a study day.");
+  }
+
+  if (!career) {
+    errors.push("Please select a career path.");
+  }
+
+  if (errors.length > 0) {
+    throw new Error(errors.map((message) => `<li>${message}</li>`).join(""));
+  }
+};
+
+const runUnitTests = () => {
+  console.assert(
+    calculateCompletePercent(5, 10) === 50,
+    "calculateCompletePercent(5, 10) should be 50"
+  );
+  console.assert(
+    calculateCompletePercent(0, 0) === 0,
+    "calculateCompletePercent(0, 0) should be 0"
+  );
+  console.assert(
+    calculateStudyHours(10, 6) === 60,
+    "calculateStudyHours(10, 6) should be 60"
+  );
+  console.assert(getCourseGrade(95) === "A", "getCourseGrade(95) should be A");
+  console.assert(getCourseGrade(40) === "F", "getCourseGrade(40) should be F");
+};
+
+const escapeHtml = (value) =>
+  String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+
+const resetDashboard = (
+  studentNameInput,
+  completedModulesInput,
+  studyDayInput,
+  careerInput,
+  output
+) => {
+  studentNameInput.value = "";
+  completedModulesInput.value = "";
+  studyDayInput.selectedIndex = 0;
+  careerInput.selectedIndex = -1;
+  output.innerHTML = "";
+  output.style.backgroundColor = "";
+};
+
+const displayDashboard = (
+  output,
+  studentName,
+  completedModules,
+  totalStudyHours,
+  remainingHours,
+  percentComplete,
+  percentRemaining,
+  grade,
+  progress,
+  studyDay,
+  studyPlan,
+  career
+) => {
+  output.innerHTML = `
+    <div class="dashboard-card">
+      <h2>Dashboard for ${escapeHtml(studentName)}</h2>
+      <ul>
+        <li>Career Path: ${escapeHtml(career)}</li>
+        <li>Completed Modules: ${completedModules}</li>
+        <li>Total Study Hours: ${totalStudyHours}</li>
+        <li>Remaining Study Hours: ${remainingHours}</li>
+        <li>Percent Complete: ${percentComplete}%</li>
+        <li>Percent Remaining: ${percentRemaining}%</li>
+        <li>Grade: ${grade}</li>
+        <li>Progress: ${progress}</li>
+        <li>Study Day: ${escapeHtml(studyDay)}</li>
+        <li>Study Plan: ${studyPlan}</li>
+      </ul>
+    </div>`;
+};
+
+const displayRemainingModules = (remainingModules) => {
+  const output = document.getElementById("output");
+
+  const items =
+    remainingModules.length === 0
+      ? "<li>All modules complete</li>"
+      : remainingModules
+          .map((module) => `<li>${module.moduleName}</li>`)
+          .join("");
+
+  output.insertAdjacentHTML(
+    "beforeend",
+    `<div class="dashboard-card">
+      <h3>Remaining Modules</h3>
+      <ul>${items}</ul>
+    </div>`
+  );
+};
+
+const applyDashboardColor = (percentComplete, output) => {
+  if (percentComplete >= 75) {
+    output.style.backgroundColor = "#d4edda";
+  } else if (percentComplete >= 40) {
+    output.style.backgroundColor = "#fff3cd";
+  } else {
+    output.style.backgroundColor = "#d6e4f5";
+  }
+};
+
+const displayJoke = async () => {
+  const container = document.getElementById("jokeContainer");
+
+  if (!container) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "https://official-joke-api.appspot.com/random_joke"
+    );
+
+    if (!response.ok) {
+      throw new Error("Joke request failed");
+    }
+
+    const data = await response.json();
+    container.innerHTML = `<p>${data.setup}</p><p><strong>${data.punchline}</strong></p>`;
+  } catch {
+    container.textContent = "Joke unavailable right now.";
+  }
+};
+
+const displayQuote = async () => {
+  const container = document.getElementById("quoteContainer");
+
+  if (!container) {
+    return;
+  }
+
+  try {
+    const response = await fetch("https://dummyjson.com/quotes/random");
+
+    if (!response.ok) {
+      throw new Error("Quote request failed");
+    }
+
+    const data = await response.json();
+    container.innerHTML = `<p>"${data.quote}"</p><p><em>- ${data.author}</em></p>`;
+  } catch {
+    container.textContent = "Quote unavailable right now.";
+  }
+};
+
+/*
+    Name: Samuel Rosa
+    Assignment: Final Project
+    Instructor: Lisa
+*/
+
+const studentNameInput = document.getElementById("studentName");
+const completedModulesInput = document.getElementById("completedModules");
+const studyDayInput = document.getElementById("studyDay");
+const careerInput = document.getElementById("career");
+const generateButton = document.getElementById("generateButton");
+const resetButton = document.getElementById("resetButton");
+const output = document.getElementById("output");
+
+careerInput.selectedIndex = -1;
+
+const careerNames = careerPaths.map((careerPath) => careerPath.name);
+console.log("Career Path Names: ", careerNames);
+
+const careersWithManyResources = careerPaths.filter(
+  (careerPath) => careerPath.resources.length > 4
+);
+console.log("Career Paths With More Than 4 Resources: ", careersWithManyResources);
+
+const totalSkills = careerPaths.reduce(
+  (total, careerPath) => total + careerPath.skills.length,
+  0
+);
+console.log("Total Skills Across All Career Paths: ", totalSkills);
+
+const generateDashboard = () => {
+  try {
+    const studentName = studentNameInput.value;
+    const completedModules = Number(completedModulesInput.value) || 0;
+    const studyDay = studyDayInput.value;
+    const career = careerInput.value;
+
+    validateInputs(studentName, completedModules, studyDay, career);
+
+    const totalStudyHours = calculateStudyHours(courseModules.length, 6);
+    const percentComplete = calculateCompletePercent(
+      completedModules,
+      courseModules.length
+    );
+    const percentRemaining = 100 - percentComplete;
+
+    const grade = getCourseGrade(percentComplete);
+    const progress = getCourseProgress(percentRemaining);
+    const studyPlan = getStudyPlan(studyDay);
+
+    const moduleNames = courseModules.map((module) => module.moduleName);
+    const remainingModules = courseModules.filter(
+      (module, index) => index >= completedModules
+    );
+    const remainingHours = remainingModules.reduce(
+      (total, module) => total + module.hoursRequired,
+      0
+    );
+
+    console.log("Student Name: ", studentName);
+    console.log("Career Path: ", career);
+    console.log("Completed Modules: ", completedModules);
+    console.log("Study Day: ", studyDay);
+    console.log("Percent Complete: ", percentComplete);
+    console.log("Grade: ", grade);
+    console.log("Progress: ", progress);
+    console.log("Module Names: ", moduleNames);
+
+    displayDashboard(
+      output,
+      studentName,
+      completedModules,
+      totalStudyHours,
+      remainingHours,
+      percentComplete,
+      percentRemaining,
+      grade,
+      progress,
+      studyDay,
+      studyPlan,
+      career
+    );
+    displayRemainingModules(remainingModules);
+    applyDashboardColor(percentComplete, output);
+
+    runUnitTests();
+  } catch (error) {
+    output.innerHTML = `
+      <div class="dashboard-card">
+        <h2>Error</h2>
+        <ul>${error.message}</ul>
+      </div>`;
+    output.style.backgroundColor = "#f8d7da";
+  }
+};
+
+generateButton.addEventListener("click", generateDashboard);
+resetButton.addEventListener("click", () =>
+  resetDashboard(
+    studentNameInput,
+    completedModulesInput,
+    studyDayInput,
+    careerInput,
+    output
+  )
+);
+
+displayQuote();
+
+    </script>
   </body>
 </html>

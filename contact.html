@@ -5,7 +5,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>My Website!</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="styles.css" />
+    <style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1f2933;
+  background-color: #f4f6f8;
+}
+
+.topnav {
+  display: flex;
+  background-color: #1f3a5f;
+}
+
+.topnav a {
+  padding: 14px 20px;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.topnav a:hover {
+  background-color: #2f5688;
+}
+
+.topnav a.active {
+  background-color: #4c8bd6;
+}
+
+.innerbody {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+label {
+  display: block;
+  margin: 12px 0;
+  font-weight: bold;
+}
+
+input,
+textarea,
+select {
+  margin-left: 8px;
+  padding: 6px 8px;
+  font-size: 1rem;
+}
+
+button {
+  margin: 8px 8px 8px 0;
+  padding: 8px 18px;
+  font-size: 1rem;
+  color: #ffffff;
+  background-color: #1f3a5f;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #2f5688;
+}
+
+#output,
+.module-output {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.dashboard-card {
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-card h2,
+.dashboard-card h3 {
+  margin-top: 0;
+}
+
+footer {
+  background-color: #1f3a5f;
+  color: #ffffff;
+  text-align: center;
+  padding: 16px;
+}
+
+.footer .row {
+  margin: 6px 0;
+}
+
+.footer a {
+  color: #ffffff;
+}
+
+textarea {
+  display: block;
+  width: 100%;
+  margin: 6px 0 0;
+  font-family: inherit;
+}
+    </style>
   </head>
   <body>
     <div class="topnav">
@@ -15,10 +122,22 @@
     </div>
 
     <div class="innerbody">
-      <h1>Welcome to JavaScript!</h1>
+      <h1>Contact Me</h1>
+
+      <label> Name: <input id="contactName" /> </label>
+
+      <label> Email: <input id="contactEmail" type="email" /> </label>
+
+      <label>
+        Message:
+        <textarea id="contactMessage" rows="5"></textarea>
+      </label>
+
+      <button id="sendButton">Send</button>
+
+      <button id="clearButton">Clear</button>
 
       <div class="module-output" id="output"></div>
-
     </div>
 
     <footer>
@@ -32,5 +151,72 @@
         </div>
       </div>
     </footer>
+    <script>
+const contactNameInput = document.getElementById("contactName");
+const contactEmailInput = document.getElementById("contactEmail");
+const contactMessageInput = document.getElementById("contactMessage");
+const sendButton = document.getElementById("sendButton");
+const clearButton = document.getElementById("clearButton");
+const contactOutput = document.getElementById("output");
+
+const escapeHtml = (value) =>
+  String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+
+const sendMessage = () => {
+  const name = contactNameInput.value.trim();
+  const email = contactEmailInput.value.trim();
+  const message = contactMessageInput.value.trim();
+  const errors = [];
+
+  if (name === "") {
+    errors.push("Name is required.");
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errors.push("A valid email address is required.");
+  }
+
+  if (message.length < 10) {
+    errors.push("Message must be at least 10 characters.");
+  }
+
+  if (errors.length > 0) {
+    contactOutput.innerHTML = `
+      <div class="dashboard-card">
+        <h2>Error</h2>
+        <ul>${errors.map((error) => `<li>${error}</li>`).join("")}</ul>
+      </div>`;
+    contactOutput.style.backgroundColor = "#f8d7da";
+    return;
+  }
+
+  console.log("Contact Name: ", name);
+  console.log("Contact Email: ", email);
+  console.log("Contact Message: ", message);
+
+  contactOutput.innerHTML = `
+    <div class="dashboard-card">
+      <h2>Thank you, ${escapeHtml(name)}!</h2>
+      <p>Your message was received. A reply will be sent to ${escapeHtml(email)}.</p>
+      <p><strong>Your message:</strong> ${escapeHtml(message)}</p>
+    </div>`;
+  contactOutput.style.backgroundColor = "#d4edda";
+};
+
+const clearForm = () => {
+  contactNameInput.value = "";
+  contactEmailInput.value = "";
+  contactMessageInput.value = "";
+  contactOutput.innerHTML = "";
+  contactOutput.style.backgroundColor = "";
+};
+
+sendButton.addEventListener("click", sendMessage);
+clearButton.addEventListener("click", clearForm);
+    </script>
   </body>
 </html>

@@ -1,78 +1,56 @@
-export function calculateCompletePercent(completed, total) {
-  return (completed / total) * 100;
-}
+export const calculateStudyHours = (moduleCount, hoursPerModule) =>
+  moduleCount * hoursPerModule;
 
-export function calculateStudyHours(modules, hoursPerModule) {
-  return modules * hoursPerModule;
-}
-
-export function getCourseProgress(percentRemaining) {
-  if (percentRemaining === 0) {
-    return "Finished!";
-  } else if (percentRemaining >= 1 && percentRemaining < 25) {
-    return "Almost Finished!";
-  } else if (percentRemaining >= 25 && percentRemaining < 75) {
-    return "Making Progress";
-  } else if (percentRemaining >= 75 && percentRemaining <= 100) {
-    return "Just Getting Started";
-  } else {
-    return "Invalid entry.";
+export const calculateCompletePercent = (completedModules, totalModules) => {
+  if (totalModules === 0) {
+    return 0;
   }
-}
 
-export let getCourseGrade = (percentCompleted) => {
-  if (percentCompleted >= 90) {
-    return "A";
-  } else if (percentCompleted >= 80) {
-    return "B";
-  } else if (percentCompleted >= 70) {
-    return "C";
-  } else if (percentCompleted >= 60) {
-    return "D";
-  } else if (percentCompleted < 60) {
-    return "F";
-  } else {
-    return "Invalid entry.";
-  }
+  return Math.round((completedModules / totalModules) * 100);
 };
 
-let hoursPerWeek = 6;
-let adjustedDailyHours = hoursPerWeek / 6;
-let adjustedDailyMinutes = adjustedDailyHours * 60;
-
-export let getStudyPlan = (studyDay) => {
-  const dailyMinutes = (hoursPerWeek / 7) * 60;
-  let studyPlan = "";
-  switch (studyDay) {
-    case "Monday":
-      studyPlan = `Study for ${dailyMinutes.toFixed(2)} minutes today.`;
-      break;
-    case "Tuesday":
-      studyPlan = `Lab day work for ${adjustedDailyMinutes.toFixed(2)} minutes.`;
-      break;
-    case "Wednesday":
-      studyPlan = `Applied programming Code for ${adjustedDailyMinutes.toFixed(
-        2
-      )} minutes today.`;
-      break;
-    case "Thursday":
-      studyPlan = "kahoot/blooket day.";
-      break;
-    case "Friday":
-      studyPlan = "slow day of studyin just review material";
-      break;
-    case "Saturday":
-      studyPlan = "Rest day.";
-      break;
-    case "Sunday":
-      studyPlan = "party night.";
-      break;
-    case "Complete":
-      studyPlan = "Course Completed!";
-      break;
-    default:
-      studyPlan = "Invalid day.";
-      break;
+export const getCourseGrade = (percentComplete) => {
+  if (percentComplete >= 90) {
+    return "A";
   }
-  return studyPlan;
+  if (percentComplete >= 80) {
+    return "B";
+  }
+  if (percentComplete >= 70) {
+    return "C";
+  }
+  if (percentComplete >= 60) {
+    return "D";
+  }
+  return "F";
+};
+
+export const getCourseProgress = (percentRemaining) => {
+  if (percentRemaining === 0) {
+    return "Course complete";
+  }
+  if (percentRemaining <= 25) {
+    return "Almost there";
+  }
+  if (percentRemaining <= 50) {
+    return "Making steady progress";
+  }
+  if (percentRemaining < 100) {
+    return "Getting started";
+  }
+  return "Not started";
+};
+
+export const getStudyPlan = (studyDay) => {
+  const plans = {
+    Monday: "Read the next module lesson",
+    Tuesday: "Work through the practice exercises",
+    Wednesday: "Review notes and key terms",
+    Thursday: "Start the module assignment",
+    Friday: "Finish and test the assignment",
+    Saturday: "Catch up on any missed work",
+    Sunday: "Rest and plan the week ahead"
+  };
+
+  return plans[studyDay] || "Choose a study day";
 };

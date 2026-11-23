@@ -1,40 +1,43 @@
-const jokeContainer = document.getElementById("jokeContainer");
-const quoteContainer = document.getElementById("quoteContainer");
-
-export const getJoke = async () => {
-  const response = await fetch(
-    "https://official-joke-api.appspot.com/random_joke"
-  );
-  const data = await response.json();
-  return data;
-};
-
 export const displayJoke = async () => {
+  const container = document.getElementById("jokeContainer");
+
+  if (!container) {
+    return;
+  }
+
   try {
-    jokeContainer.innerHTML = "Loading joke...";
-    const joke = await getJoke();
-    jokeContainer.innerHTML = `
-      <p>${joke.setup}</p>
-      <p>${joke.punchline}</p>`;
-  } catch (error) {
-    jokeContainer.innerHTML = `Unable to load joke.`;
+    const response = await fetch(
+      "https://official-joke-api.appspot.com/random_joke"
+    );
+
+    if (!response.ok) {
+      throw new Error("Joke request failed");
+    }
+
+    const data = await response.json();
+    container.innerHTML = `<p>${data.setup}</p><p><strong>${data.punchline}</strong></p>`;
+  } catch {
+    container.textContent = "Joke unavailable right now.";
   }
 };
 
-export const getQuote = async () => {
-  const response = await fetch("https://dummyjson.com/quotes/random");
-  const data = await response.json();
-  return data;
-};
-
 export const displayQuote = async () => {
+  const container = document.getElementById("quoteContainer");
+
+  if (!container) {
+    return;
+  }
+
   try {
-    quoteContainer.innerHTML = "Loading quote...";
-    const quote = await getQuote();
-    quoteContainer.innerHTML = `
-      <p>"${quote.quote}"</p>
-      <p>- ${quote.author}</p>`;
-  } catch (error) {
-    quoteContainer.innerHTML = `Unable to load quote.`;
+    const response = await fetch("https://dummyjson.com/quotes/random");
+
+    if (!response.ok) {
+      throw new Error("Quote request failed");
+    }
+
+    const data = await response.json();
+    container.innerHTML = `<p>"${data.quote}"</p><p><em>- ${data.author}</em></p>`;
+  } catch {
+    container.textContent = "Quote unavailable right now.";
   }
 };

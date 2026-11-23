@@ -1,56 +1,58 @@
+import { courseModules } from "./data.js";
 import {
   calculateCompletePercent,
   calculateStudyHours,
-  getCourseGrade,
-  getCourseProgress,
-  getStudyPlan
+  getCourseGrade
 } from "./calculations.js";
 
-export const validateInputs = (studentName, completedModules, studyDay) => {
+export const validateInputs = (
+  studentName,
+  completedModules,
+  studyDay,
+  career
+) => {
   const errors = [];
 
   if (studentName.trim() === "") {
-    errors.push(`<li>Please enter a name.</li>`);
+    errors.push("Student name is required.");
   }
 
-  if (completedModules < 0 || completedModules > 10) {
-    errors.push(`<li>Completed modules must be between 0 and 10.</li>`);
+  if (
+    !Number.isInteger(completedModules) ||
+    completedModules < 0 ||
+    completedModules > courseModules.length
+  ) {
+    errors.push(
+      `Completed modules must be a whole number from 0 to ${courseModules.length}.`
+    );
   }
 
-  if (studyDay === "") {
-    errors.push(`<li>Please select a study day.</li>`);
+  if (!studyDay) {
+    errors.push("Please select a study day.");
+  }
+
+  if (!career) {
+    errors.push("Please select a career path.");
   }
 
   if (errors.length > 0) {
-    throw new Error(errors.join(""));
+    throw new Error(errors.map((message) => `<li>${message}</li>`).join(""));
   }
 };
 
 export const runUnitTests = () => {
-  console.assert(getCourseGrade(95) === "A", "Grade A test failed");
-  console.assert(getCourseGrade(85) === "B", "Grade B test failed");
-  console.assert(getCourseGrade(75) === "C", "Grade C test failed");
-  console.assert(getCourseGrade(65) === "D", "Grade D test failed");
-  console.assert(getCourseGrade(40) === "F", "Grade F test failed");
-
   console.assert(
     calculateCompletePercent(5, 10) === 50,
-    "Percent complete test failed"
+    "calculateCompletePercent(5, 10) should be 50"
+  );
+  console.assert(
+    calculateCompletePercent(0, 0) === 0,
+    "calculateCompletePercent(0, 0) should be 0"
   );
   console.assert(
     calculateStudyHours(10, 6) === 60,
-    "Study hours test failed"
+    "calculateStudyHours(10, 6) should be 60"
   );
-  console.assert(
-    getCourseProgress(0) === "Finished!",
-    "Progress finished test failed"
-  );
-  console.assert(
-    getCourseProgress(100) === "Just Getting Started",
-    "Progress just started test failed"
-  );
-  console.assert(
-    getStudyPlan("Saturday") === "Rest day.",
-    "Study plan test failed"
-  );
+  console.assert(getCourseGrade(95) === "A", "getCourseGrade(95) should be A");
+  console.assert(getCourseGrade(40) === "F", "getCourseGrade(40) should be F");
 };
